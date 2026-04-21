@@ -1,121 +1,49 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { DashboardLayout } from "./components/dashboard-layout";
+import { AllLinksPage } from "./pages/all-links";
+import { CreateLinkPage } from "./pages/create-link";
+import { OverviewStatsPage } from "./components/overview/overview-stats-state";
+import PDFViewer from "./pages/SecurePdfSigner";
+// import PayrollWizard from "./components/client/payroll-wizard";
+import Test from "./pages/test2";
+import ScrollablePdfViewer from "./pages/custom-pdf";
+import PdfUploadViewer from "./pages/pdf";
+import SimplePdfViewer from "./pages/simple-pdf";
+import SamplePdfPage from "./pages/sample";
+import SignDocumentWizard from "./components/wizard/wizard-layout";
+import LandingPage from "./pages/home";
+
+// Simple page components for testing
+// const Overview = () => <div className="text-2xl font-bold">Overview Page</div>;
+// const AllLinks = () => <div className="text-2xl font-bold">All Links Page</div>;
+const Signatures = () =>  <p>signature</p>;
+const Invoices = () => <div className="text-2xl font-bold">Invoices Page</div>;
+const Settings = () => <div className="text-2xl font-bold">Settings Page</div>;
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route element={<DashboardLayout />}>
+          <Route path="/overview" element={<OverviewStatsPage />} />
+          <Route path="/all-links" element={<AllLinksPage />} />
+          <Route path="/signatures" element={<Signatures />} />
+          <Route path="/invoices" element={<Invoices />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/create-link" element={<CreateLinkPage />} />
+        </Route>
+          <Route path="/client" element={<SignDocumentWizard />} />
+          <Route path="/w" element={<Test />} />
+          <Route path="/u" element={<PdfUploadViewer />} />
+          <Route path="/x" element={<SamplePdfPage />} />
+          <Route path="/s" element={<SimplePdfViewer fileUrl="/sp.pdf" />} />
+          <Route path="/d" element={<ScrollablePdfViewer file="/sp.pdf" />} />
+          <Route path="/p" element={<PDFViewer fileUrl="/sp.pdf" x={200} y={200} page={1} />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
