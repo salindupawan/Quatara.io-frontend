@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import WizardHeader from "./wizard-header";
 import WizardFooter from "./wizard-footer";
 import SimplePdfViewer from "@/pages/simple-pdf";
 import {
   Step2SelectEmployees,
-  Step3ReviewAttendance,
   Step4CalculatePayroll,
   Step5Finalize,
 } from "../client/step-components";
@@ -32,16 +31,16 @@ export default function SignWizard() {
 
   const stripePromise = loadStripe('pk_test_51Ml92zElEebY77JjuppWqvD8lOJGk4dbhV5Fj2d4uWSBzpbxemKmGHIsRBZ6lT1SguMuE2XwdKAXF2GpOrFM7p6o00SCy1pnBL');
 
-  const options = {
-    // OPTION A: Use a Client Secret from your backend (Recommended)
-    // clientSecret: 'pi_3P..._secret_...', 
+  // const options = {
+  //   // OPTION A: Use a Client Secret from your backend (Recommended)
+  //   // clientSecret: 'pi_3P..._secret_...', 
     
-    // OPTION B: For initial frontend testing only
-    mode: 'payment',
-    amount: 4900, // $49.00
-    currency: 'usd',
-    // appearance: stripeAppearance, // the variable we created earlier
-  };
+  //   // OPTION B: For initial frontend testing only
+  //   mode: 'payment',
+  //   amount: 4900, // $49.00
+  //   currency: 'usd',
+  //   // appearance: stripeAppearance, // the variable we created earlier
+  // };
   
 
   const renderStepContent = () => {
@@ -122,25 +121,5 @@ export default function SignWizard() {
     </div>
   );
 
-  const stripeAppearance = {
-  theme: 'flat',
-  variables: {
-    colorPrimary: '#2563eb', // blue-600
-    colorBackground: '#ffffff',
-    colorText: '#0f172a',
-    colorDanger: '#df1b41',
-    fontFamily: 'Inter, system-ui, sans-serif',
-    spacingUnit: '4px',
-    borderRadius: '12px',
-  },
-  rules: {
-    '.Input': {
-      border: '1px solid #e2e8f0',
-      boxShadow: 'none',
-    },
-    '.Input:focus': {
-      border: '1px solid #2563eb',
-    },
-  }
-};
+  
 }

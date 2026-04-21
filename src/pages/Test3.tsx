@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useRef } from 'react';
+import  { useState, useRef } from 'react';
 import { 
   DndContext, 
   useDraggable, 
@@ -11,7 +11,7 @@ import {
   type DragEndEvent,
   type DragStartEvent
 } from '@dnd-kit/core';
-import { User, Banknote, Calendar, GripVertical, Plus, X } from 'lucide-react';
+import { User, Banknote, Calendar, GripVertical } from 'lucide-react';
 
 // --- Types ---
 interface DroppedItem {

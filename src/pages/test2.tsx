@@ -1,13 +1,11 @@
-import { useState, useRef, MouseEvent, MouseEventHandler } from 'react';
+import { useState, useRef } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
-import Draggable from 'react-draggable';
 
 // Set worker source
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
-import { SignatureIcon } from 'lucide-react';
 
 interface SignaturePosition {
   x: number;
@@ -27,7 +25,7 @@ const Test = () => {
   const pageContainerRef = useRef<HTMLDivElement>(null);
   
   // Ref for the Draggable element (to fix findDOMNode crash)
-  const tagRef = useRef<HTMLDivElement>(null);
+  // const tagRef = useRef<HTMLDivElement>(null);
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -40,22 +38,22 @@ const Test = () => {
   };
 
   // 1. Programmatically calculate final coordinates based on drag event
-  const handleDragStop = (e: any, data: any) => {
-    if (!pageContainerRef.current) return;
-    const rect = pageContainerRef.current.getBoundingClientRect();
+  // const handleDragStop = (e: any, data: any) => {
+  //   if (!pageContainerRef.current) return;
+  //   const rect = pageContainerRef.current.getBoundingClientRect();
 
-    /**
-     * Data.x/y is relative to the Draggable container, not the viewport.
-     * We need to add that relative move (data.x) to the viewport's position.
-     * BUT data.y gives us where the Mouse event ended. We use that directly.
-     * * IMPORTANT: Coordinates must be programmatically derived from where the tag ends.
-     */
-    setSignaturePosition({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-      page: pageNumber
-    });
-  };
+  //   /**
+  //    * Data.x/y is relative to the Draggable container, not the viewport.
+  //    * We need to add that relative move (data.x) to the viewport's position.
+  //    * BUT data.y gives us where the Mouse event ended. We use that directly.
+  //    * * IMPORTANT: Coordinates must be programmatically derived from where the tag ends.
+  //    */
+  //   setSignaturePosition({
+  //     x: e.clientX - rect.left,
+  //     y: e.clientY - rect.top,
+  //     page: pageNumber
+  //   });
+  // };
 
   const submitMetadata = () => {
     if (!signaturePosition) return;
@@ -65,9 +63,9 @@ const Test = () => {
     });
   };
 
-  const changePage = (offset: number) => {
-    setPageNumber(prev => Math.max(1, Math.min(numPages, prev + offset)));
-  };
+  // const changePage = (offset: number) => {
+  //   setPageNumber(prev => Math.max(1, Math.min(numPages, prev + offset)));
+  // };
 
   return (
     <div className="flex flex-col items-center p-6 bg-slate-100 min-h-screen font-sans">
