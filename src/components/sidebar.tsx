@@ -18,11 +18,11 @@ export const Sidebar = ({isOpen}: {isOpen: boolean}) => {
 
       <ScrollArea className="flex-1 px-4 py-6">
         <nav className="space-y-2">
-          <NavLink icon={<Grid3X3 />}>Overview</NavLink>
-          <NavLink icon={<Link2 />} isActive={true}>All Links</NavLink>
-          <NavLink icon={<Signature />}>Signatures</NavLink>
-          <NavLink icon={<FileText />}>Invoices</NavLink>
-          <NavLink icon={<Settings />}>Settings</NavLink>
+          <NavLink to={"/"} icon={<Grid3X3 />}>Overview</NavLink>
+          <NavLink to={"/"} icon={<Link2 />} >All Links</NavLink>
+          <NavLink to={"/"} icon={<Signature />}>Signatures</NavLink>
+          <NavLink to={"/"} icon={<FileText />}>Invoices</NavLink>
+          <NavLink to={"/"} icon={<Settings />}>Settings</NavLink>
         </nav>
       </ScrollArea>
 
@@ -35,8 +35,8 @@ export const Sidebar = ({isOpen}: {isOpen: boolean}) => {
         </div>
         
         <div className="space-y-1">
-          <NavLink icon={<HelpCircle />}>Support</NavLink>
-          <NavLink icon={<LogOut />}>Sign Out</NavLink>
+          <NavLink to="/" icon={<HelpCircle />}>Support</NavLink>
+          <NavLink to="/" icon={<LogOut />}>Sign Out</NavLink>
         </div>
       </div>
     </div>
