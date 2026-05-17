@@ -3,8 +3,28 @@ import { StatCard } from "./stat-card";
 import { NotificationItem } from "./notification-item";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@clerk/react";
+import { useEffect } from "react";
 
 export const OverviewStatsPage = () => {
+  const { getToken, isLoaded, isSignedIn } = useAuth();
+
+  useEffect(() => {
+    const logToken = async () => {
+      if (isLoaded && isSignedIn) {
+        try {
+          // getToken() returns a Promise that resolves to the JWT
+          const token = await getToken({template: "quatara-user"});
+          console.log("Clerk JWT Token:", token);
+        } catch (err) {
+          console.error("Error fetching token:", err);
+        }
+      }
+    };
+
+    logToken();
+  }, [isLoaded, isSignedIn, getToken]);
+
   return (
     <div className=" mx-auto space-y-10">
       {/* Header */}

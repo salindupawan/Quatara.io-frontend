@@ -13,13 +13,13 @@ export default function Footer() {
             Product
           </h4>
           <ul className="text-sm text-slate-500 space-y-2">
-            <li className="hover:text-indigo-600 cursor-pointer transition-colors">
+            <li className="hover:text-[#003EC2] cursor-pointer transition-colors">
               Features
             </li>
-            <li className="hover:text-indigo-600 cursor-pointer transition-colors">
+            <li className="hover:text-[#003EC2] cursor-pointer transition-colors">
               Pricing
             </li>
-            <li className="hover:text-indigo-600 cursor-pointer transition-colors">
+            <li className="hover:text-[#003EC2] cursor-pointer transition-colors">
               Security
             </li>
           </ul>
@@ -29,13 +29,13 @@ export default function Footer() {
             Company
           </h4>
           <ul className="text-sm text-slate-500 space-y-2">
-            <li className="hover:text-indigo-600 cursor-pointer transition-colors">
+            <li className="hover:text-[#003EC2] cursor-pointer transition-colors">
               About Us
             </li>
-            <li className="hover:text-indigo-600 cursor-pointer transition-colors">
+            <li className="hover:text-[#003EC2] cursor-pointer transition-colors">
               Careers
             </li>
-            <li className="hover:text-indigo-600 cursor-pointer transition-colors">
+            <li className="hover:text-[#003EC2] cursor-pointer transition-colors">
               Contact
             </li>
           </ul>
@@ -45,13 +45,13 @@ export default function Footer() {
             Legal
           </h4>
           <ul className="text-sm text-slate-500 space-y-2">
-            <li className="hover:text-indigo-600 cursor-pointer transition-colors">
+            <li className="hover:text-[#003EC2] cursor-pointer transition-colors">
               Privacy Policy
             </li>
-            <li className="hover:text-indigo-600 cursor-pointer transition-colors">
+            <li className="hover:text-[#003EC2] cursor-pointer transition-colors">
               Terms of Service
             </li>
-            <li className="hover:text-indigo-600 cursor-pointer transition-colors">
+            <li className="hover:text-[#003EC2] cursor-pointer transition-colors">
               Cookie Policy
             </li>
           </ul>

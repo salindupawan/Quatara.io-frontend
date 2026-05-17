@@ -45,7 +45,7 @@ const tiers = [
 
 export default function Pricing() {
   return (
-    <section className="py-24 px-8 text-center">
+    <section id="pricing" className="py-24 px-8 text-center">
       <h2 className="text-3xl font-bold mb-4">Transparent Pricing</h2>
       <p className="text-slate-500 mb-12">
         Simple tiers built for freelancers and growing agencies.

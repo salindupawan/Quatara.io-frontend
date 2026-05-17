@@ -1,4 +1,4 @@
-import { ArrowRight, FileUp } from "lucide-react";
+import { ArrowRight, FileUp, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +9,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TemplateSelection } from "@/components/links/template-selection";
 import { SuccessDialog } from "@/components/links/success-dialog";
+import PdfSigner from "@/components/editor/PdfSigner";
+import type { Annotation, OnboardingData } from "@/service/Storage";
+import { StorageService } from "@/service/StorageService";
+import { generatePreSignedUrl, uploadFileToS3 } from "@/lib/api";
+import type { GeneratedPresignedUrlResponse } from "@/lib/types";
+import { getToken } from "@clerk/react";
 
 export const CreateLinkPage = () => {
   const navigate = useNavigate();
@@ -19,9 +25,74 @@ export const CreateLinkPage = () => {
     project: "Q3 Brand Strategy",
     amount: "$2,500.00",
     kycRequired: true,
-    magicLink: "https://swiftsign.io/l/acme-q3-strategy-8j2k"
+    magicLink: "https://swiftsign.io/l/acme-q3-strategy-8j2k",
   });
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [annotations, setAnnotations] = useState<Annotation[]>([]);
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [fileBase64, setFileBase64] = useState<string | null>(null);
+  const [rawFile, setRawFile] = useState<File | null>(null);
+// const [isUploading, setIsUploading] = useState(false);
+const [preSignedData, setPreSignedData] = useState<GeneratedPresignedUrlResponse | null>(null);
 
+  const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type === "application/pdf") {
+      // Convert the file to a URL object that the PDF viewer can read
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setFileBase64(base64String);
+        // console.log("File converted to Base64:", base64String);
+      };
+
+      reader.readAsDataURL(file);
+
+      const fileUrl = URL.createObjectURL(file);
+      setSelectedFile(fileUrl);
+      setRawFile(file);
+
+      const token = await getToken();
+      if (!token) {
+        return;
+      }
+
+      try{
+        const data = await generatePreSignedUrl({
+        token: token,
+        fileName: file.name,
+        contentType: file.type,
+      });
+
+      setPreSignedData(data);
+      console.log("Received pre-signed URL data:", data);
+      }catch(error){
+        console.error("Error generating pre-signed URL:", error);
+      }
+
+      setIsEditorOpen(true);
+    }
+  };
+
+  
+
+  const handleOnboardingDataSave = () => {
+    const data: OnboardingData = {
+      projectId: "1",
+      annotations: annotations,
+      lastUpdated: "",
+      pdfUrl: fileBase64 || "",
+      projectName: "Sample Project",
+      clientName: "Sample Client",
+    };
+    StorageService.clearQuataraData();
+    StorageService.save<OnboardingData>("quatara_current_project", data);
+  };
+
+  const handleAnnotaionSave = (anno: Annotation[]) => {
+    setAnnotations(anno);
+    console.log("Saved Annotations:", anno);
+  };
   const handleGenerate = () => {
     // 1. Your logic to save the data to the backend
     // 2. On success, show the modal:
@@ -47,6 +118,7 @@ export const CreateLinkPage = () => {
           <div className="grid md:grid-cols-[160px,1fr] gap-x-12 gap-y-8">
             <div className="pt-1.5">
               <h2 className="text-sm">1. THE BASICS</h2>
+              <p>{annotations.length} annotations added</p>
             </div>
             <div className="space-y-6">
               <div className="space-y-2">
@@ -89,6 +161,20 @@ export const CreateLinkPage = () => {
                   placeholder="Q3 Marketing Strategy"
                   className="bg-[#F3F4F6] border-none text-sm h-[48px] rounded-lg px-4 placeholder:text-[#9CA3AF]"
                 />
+              </div>
+              <div className="space-y-2 border-2 border-dashed rounded-xl p-12 flex flex-col items-center bg-white">
+                <input
+                  type="file"
+                  id="main-pdf-upload"
+                  className="hidden"
+                  accept=".pdf"
+                  onChange={onFileChange}
+                />
+                <Button asChild>
+                  <label htmlFor="main-pdf-upload" className="cursor-pointer">
+                    <Upload className="mr-2 h-4 w-4" /> Upload New Document
+                  </label>
+                </Button>
               </div>
             </div>
           </div>
@@ -221,7 +307,7 @@ export const CreateLinkPage = () => {
 
           {/* Primary Action Button - Stays on top on mobile and goes full width */}
           <Button
-          onClick={handleGenerate}
+            onClick={handleOnboardingDataSave}
             variant={"gradient"}
             className="w-full md:w-auto h-[52px] px-8 gap-2 rounded-lg text-sm shadow-lg shadow-blue-200/50 flex items-center justify-center group transition-all"
           >
@@ -229,13 +315,30 @@ export const CreateLinkPage = () => {
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Button>
         </div>
-
-        
       </div>
-      <SuccessDialog 
-        isOpen={showSuccess} 
-        onOpenChange={setShowSuccess} 
-        data={formData} 
+      {selectedFile && (
+        <PdfSigner
+          initialFile={selectedFile}
+          onClose={() => setIsEditorOpen(false)}
+          isOpen={isEditorOpen}
+          onSave={async (data: Annotation[]) => {
+            handleAnnotaionSave(data);
+            setIsEditorOpen(false);
+            try {
+              if (preSignedData && rawFile) {
+                await uploadFileToS3(preSignedData.uploadUrl, rawFile);
+                console.log("File uploaded successfully to S3 with key:", preSignedData.fileKey);
+              }
+            } catch (error) {
+              console.error("Error uploading file to S3:", error);
+            }
+          }}
+        />
+      )}
+      <SuccessDialog
+        isOpen={showSuccess}
+        onOpenChange={setShowSuccess}
+        data={formData}
       />
     </div>
   );

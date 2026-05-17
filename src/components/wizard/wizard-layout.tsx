@@ -1,9 +1,8 @@
-import  { useState } from "react";
+import  { useRef, useState } from "react";
 import WizardHeader from "./wizard-header";
 import WizardFooter from "./wizard-footer";
 import SimplePdfViewer from "@/pages/simple-pdf";
 import {
-  Step2SelectEmployees,
   Step4CalculatePayroll,
   Step5Finalize,
 } from "../client/step-components";
@@ -17,17 +16,16 @@ const STEPS = [
     title: "Review & Sign",
     component: <SimplePdfViewer fileUrl="/sp.pdf" />,
   },
-  {
-    id: 2,
-    title: "Verify Identity",
-    component: <SimplePdfViewer fileUrl="/sp.pdf" />,
-  },
-  { id: 3, title: "Secure Payment", component: <SecurePayment /> },
+  
+  { id: 2, title: "Secure Payment", component: <SecurePayment /> },
 ];
 
 export default function SignWizard() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [isPaying, setIsPaying] = useState(false);
+
+  const paymentRef = useRef<{ handlePayment: () => Promise<{ success: boolean }> } | null>(null);
 
   const stripePromise = loadStripe('pk_test_51Ml92zElEebY77JjuppWqvD8lOJGk4dbhV5Fj2d4uWSBzpbxemKmGHIsRBZ6lT1SguMuE2XwdKAXF2GpOrFM7p6o00SCy1pnBL');
 
@@ -48,16 +46,14 @@ export default function SignWizard() {
       case 1:
         return <SimplePdfViewer fileUrl="/2.pdf" />;
       case 2:
-        return <Step2SelectEmployees />;
-      case 3:
         return (
           <Elements
             stripe={stripePromise}
-            options={{mode: 'payment', amount: 4900, currency: 'usd'}}
+            options={{clientSecret:'pi_3TU8RCElEebY77Jj1WLkdqzH_secret_rftlCeeTYRFH6gfE8QmvoT96h'}}
           >
-            <SecurePayment />
+            {/* Pass the ref here */}
+            <SecurePayment ref={paymentRef} />
           </Elements>
-        // <p>o</p>
         );
       case 4:
         return <Step4CalculatePayroll />;
@@ -71,11 +67,19 @@ export default function SignWizard() {
   //   const activeStepData = STEPS.find(s => s.id === currentStep);
   //   const ActiveComponent = activeStepData?.component || <SimplePdfViewer fileUrl="/sp.pdf" />;
 
-  const handleNext = () => {
-    if (currentStep < STEPS.length) {
+  const handleNext = async () => {
+    if (currentStep === 2) {
+      if (paymentRef.current) {
+        setIsPaying(true);
+        const result = await paymentRef.current.handlePayment();
+        setIsPaying(false);
+        
+        if (result.success) {
+          setIsCompleted(true);
+        }
+      }
+    } else if (currentStep < STEPS.length) {
       setCurrentStep((prev) => prev + 1);
-    } else {
-      setIsCompleted(true);
     }
   };
 
@@ -112,10 +116,13 @@ export default function SignWizard() {
         totalSteps={STEPS.length}
         onNext={handleNext}
         onBack={handleBack}
+        disabled={isPaying}
         nextLabel={
-          currentStep === STEPS.length
-            ? "Finish & Pay"
-            : `Continue to ${STEPS.find((s) => s.id === currentStep + 1)?.title || ""}`
+          isPaying 
+            ? "Processing..." 
+            : currentStep === STEPS.length 
+              ? "Finish & Pay" 
+              : "Continue"
         }
       />
     </div>
